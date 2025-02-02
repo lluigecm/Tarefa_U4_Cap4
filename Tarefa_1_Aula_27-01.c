@@ -10,6 +10,8 @@
 volatile bool button_a_pressed = false;
 volatile bool button_b_pressed = false;
 
+int lastTime = 0;   // Variável para debounce
+
 const Matriz_leds_config zero = {
     {{0.0, 0.0, 0.0}, {0.5, 0.0, 0.0}, {0.5, 0.0, 0.0}, {0.5, 0.0, 0.0}, {0.0, 0.0, 0.0}}, // Linha 0
     {{0.0, 0.0, 0.0}, {0.5, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.5, 0.0, 0.0}, {0.0, 0.0, 0.0}}, // Linha 1
@@ -113,10 +115,16 @@ void blink_led() {
 }
 
 void button_callback(uint gpio, uint32_t events) {
-    if (gpio == BUTTON_A) {
-        button_a_pressed = true;
-    } else if (gpio == BUTTON_B) {
-        button_b_pressed = true;
+   
+   if(to_ms_since_boot(get_absolute_time()) - lastTime > 200){  // Debounce
+        lastTime = to_ms_since_boot(get_absolute_time());
+
+        if(gpio == BUTTON_A){
+            button_a_pressed = true;
+        }
+        else if(gpio == BUTTON_B){
+            button_b_pressed = true;
+        }
     }
 }
 
@@ -144,20 +152,18 @@ int main() {
             if(i < 9){
                 i++;
             }
-            sleep_ms(75); // Debounce
+            imprimir_desenho(nums[i], pio, sm);
+        }
+        
+        if(button_b_pressed){
+            button_b_pressed = false;
+
+            if(i > 0){
+                i--;
+            }
 
             imprimir_desenho(nums[i], pio, sm);
-        }else if(button_b_pressed){
-                button_b_pressed = false;
-
-                if(i > 0){
-                    i--;
-                }
-                sleep_ms(50); // Debounce
-        
-                imprimir_desenho(nums[i], pio, sm);
-            }
+        }
     }
-
     return 0;
 }
