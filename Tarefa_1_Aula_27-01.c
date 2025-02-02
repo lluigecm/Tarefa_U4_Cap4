@@ -4,8 +4,8 @@
 #include <stdio.h>
 
 #define LED_PIN 13  // Led vermelho
-#define BUTTON_A 6  // Botão A
-#define BUTTON_B 5  // Botão B
+#define BUTTON_A 5  // Botão A
+#define BUTTON_B 6  // Botão B
 
 volatile bool button_a_pressed = false;
 volatile bool button_b_pressed = false;
